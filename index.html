@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Penilaian Substansi Apresiasi GTK Transformatif 2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white;
+                color: black;
+            }
+            .card-box {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-16">
+
+    <!-- HEADER BAR -->
+    <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+                        <i data-lucide="award" class="w-8 h-8 text-yellow-300"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight">SIM PENILAIAN SUBSTANSI APRESIASI GTK</h1>
+                        <p class="text-blue-200 text-xs sm:text-sm">Kategori GTK Transformatif • BGTK Provinsi Kalimantan Timur</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="resetForm()" class="flex items-center space-x-1 px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium rounded-lg transition">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Reset Form</span>
+                    </button>
+                    <button onclick="window.print()" class="flex items-center space-x-1 px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-900 text-xs sm:text-sm font-semibold rounded-lg shadow transition">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span>Cetak / Cetak PDF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+
+        <!-- RINGKASAN SCORE CARD (STICKY / TOP BANNER) -->
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 mb-6 no-print">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Indikator Evaluasi</span>
+                    <div class="text-2xl font-bold text-slate-800 mt-1"><span id="evaluated-count">0</span> / 15 Terisi</div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Status Kelengkapan</span>
+                    <div id="status-badge" class="inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                        Belum Lengkap
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Predikat Kelayakan</span>
+                    <div id="predikat-badge" class="text-lg font-bold text-slate-700 mt-1">-</div>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl shadow-inner text-center">
+                    <span class="text-xs font-medium uppercase tracking-wider opacity-80">Nilai Akhir Substansi</span>
+                    <div class="text-3xl font-extrabold mt-1" id="total-score">0.00</div>
+                    <span class="text-[10px] opacity-75">Skala Nilai 0.00 - 100.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM IDENTITAS PENILAIAN -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6 card-box">
+            <h2 class="text-base font-bold text-slate-800 border-b border-slate-200 pb-3 mb-4 flex items-center gap-2">
+                <i data-lucide="user-check" class="w-5 h-5 text-blue-600"></i>
+                Identitas Penilaian & Peserta
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Nama Juri / Penilai</label>
+                    <input type="text" id="nama-juri" placeholder="Masukkan nama juri..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Nama Peserta</label>
+                    <input type="text" id="nama-peserta" placeholder="Masukkan nama peserta..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Nomor Registrasi / Peserta</label>
+                    <input type="text" id="no-peserta" placeholder="Contoh: GTK-2026-001" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Kategori GTK</label>
+                    <select id="kategori-gtk" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white">
+                        <option value="">-- Pilih Kategori --</option>
+                        <option value="Guru PAUD">Guru PAUD</option>
+                        <option value="Guru SD">Guru SD</option>
+                        <option value="Guru SMP">Guru SMP</option>
+                        <option value="Guru SMA/SMK">Guru SMA/SMK</option>
+                        <option value="Pendidik SLB">Pendidik SLB</option>
+                        <option value="Kepala Satuan Pendidikan">Kepala Satuan Pendidikan</option>
+                        <option value="Pengawas Sekolah / Penilik">Pengawas Sekolah / Penilik</option>
+                        <option value="Tenaga Kependidikan">Tenaga Kependidikan</option>
+                        <option value="Guru Pamong PPG">Guru Pamong PPG</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- RUBRIK PENILAIAN CONTAINER -->
+        <div id="rubrik-container" class="space-y-6">
+            <!-- Dynamic Content Injected via JS -->
+        </div>
+
+        <!-- REKAPITULASI CATATAN UMUM PENILAI -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mt-6 card-box">
+            <h2 class="text-base font-bold text-slate-800 border-b border-slate-200 pb-3 mb-4 flex items-center gap-2">
+                <i data-lucide="message-square" class="w-5 h-5 text-blue-600"></i>
+                Catatan Umum / Rekomendasi Penilai
+            </h2>
+            <textarea id="catatan-umum" rows="4" placeholder="Tuliskan umpan balik, keunggulan utama, atau area peningkatan dari karya peserta ini..." class="w-full p-3 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"></textarea>
+        </div>
+
+        <!-- FLOATING BOTTOM ACTION BAR -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 py-3 px-6 shadow-2xl z-50 no-print">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="text-xs text-slate-600">
+                    * Rumus Nilai Per Indikator: <span class="font-semibold text-slate-800">(Skor Perolehan / 4) × Bobot Butir</span>
+                </div>
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <button onclick="exportJSON()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-lg transition">
+                        Ekspor File Data
+                    </button>
+                    <button onclick="window.print()" class="flex-1 sm:flex-none px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md transition">
+                        Simpan & Cetak Hasil
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // DATA RUBRIK SEPERTI PADA GAMBAR DOKUMEN APRESIASI GTK 2026
+        const rubrikData = [
+            {
+                aspekId: 1,
+                aspekKode: "1",
+                aspekNama: "Orisinalitas dan relevansi karya",
+                aspekBobot: 15,
+                indikator: [
+                    {
+                        kode: "1.1",
+                        deskripsi: "Naskah menunjukkan karya sebagai praktik nyata milik peserta yang sesuai dengan tugas, fungsi, kewenangan, dan kategori peserta.",
+                        bobot: 10
+                    },
+                    {
+                        kode: "1.2",
+                        deskripsi: "Konteks masalah, kebutuhan, sasaran, dan uraian praktik dijelaskan berdasarkan fakta serta konsisten dengan video dan bukti pendukung.",
+                        bobot: 5
+                    }
+                ]
+            },
+            {
+                aspekId: 2,
+                aspekKode: "2",
+                aspekNama: "Kesesuaian dan kedalaman penerapan tema karya",
+                aspekBobot: 20,
+                indikator: [
+                    {
+                        kode: "2.1",
+                        deskripsi: "Konsep dan substansi tema dijelaskan secara tepat.",
+                        bobot: 10
+                    },
+                    {
+                        kode: "2.2",
+                        deskripsi: "Tema relevan dengan kebutuhan sasaran dan konteks kategori peserta.",
+                        bobot: 5
+                    },
+                    {
+                        kode: "2.3",
+                        deskripsi: "Tujuan, strategi, proses, hasil, dan refleksi menunjukkan penerapan tema secara utuh.",
+                        bobot: 5
+                    }
+                ]
+            },
+            {
+                aspekId: 3,
+                aspekKode: "3",
+                aspekNama: "Nilai transformatif dan kebaruan praktik",
+                aspekBobot: 25,
+                indikator: [
+                    {
+                        kode: "3.1",
+                        deskripsi: "Naskah menjelaskan unsur kebaruan praktik secara jelas.",
+                        bobot: 10
+                    },
+                    {
+                        kode: "3.2",
+                        deskripsi: "Perubahan nyata dibandingkan kondisi sebelumnya ditunjukkan secara spesifik.",
+                        bobot: 10
+                    },
+                    {
+                        kode: "3.3",
+                        deskripsi: "Strategi menjawab akar masalah serta diperbaiki melalui evaluasi dan refleksi.",
+                        bobot: 5
+                    }
+                ]
+            },
+            {
+                aspekId: 4,
+                aspekKode: "4",
+                aspekNama: "Kualitas pelaksanaan, kolaborasi, dan pemanfaatan sumber daya",
+                aspekBobot: 15,
+                indikator: [
+                    {
+                        kode: "4.1",
+                        deskripsi: "Tahapan pelaksanaan dijelaskan secara runtut dan sistematis.",
+                        bobot: 5
+                    },
+                    {
+                        kode: "4.2",
+                        deskripsi: "Pembagian peran dan kolaborasi antar pihak dijelaskan secara jelas.",
+                        bobot: 5
+                    },
+                    {
+                        kode: "4.3",
+                        deskripsi: "Sumber daya dan teknologi dimanfaatkan tepat guna dengan memperhatikan keamanan, etika, inklusivitas, dan perlindungan anak.",
+                        bobot: 5
+                    }
+                ]
+            },
+            {
+                aspekId: 5,
+                aspekKode: "5",
+                aspekNama: "Dampak nyata dan kekuatan bukti",
+                aspekBobot: 15,
+                indikator: [
+                    {
+                        kode: "5.1",
+                        deskripsi: "Dampak praktik relevan dengan tujuan dan penerima manfaat.",
+                        bobot: 5
+                    },
+                    {
+                        kode: "5.2",
+                        deskripsi: "Dampak didukung data kuantitatif dan/atau kualitatif yang dapat diverifikasi.",
+                        bobot: 5
+                    },
+                    {
+                        kode: "5.3",
+                        deskripsi: "Hubungan masalah, tindakan, dan hasil dijelaskan secara logis dengan mengakui keterbatasan.",
+                        bobot: 5
+                    }
+                ]
+            },
+            {
+                aspekId: 6,
+                aspekKode: "6",
+                aspekNama: "Keberlanjutan, pengimbasan, dan daya inspirasi",
+                aspekBobot: 10,
+                indikator: [
+                    {
+                        kode: "6.1",
+                        deskripsi: "Keberlanjutan dan dukungan kelembagaan terhadap praktik dijelaskan secara konkret dan realistis.",
+                        bobot: 5
+                    },
+                    {
+                        kode: "6.2",
+                        deskripsi: "Pengimbasan, perangkat pendukung, serta peluang adaptasi atau replikasi oleh GTK lain dijelaskan secara jelas.",
+                        bobot: 5
+                    }
+                ]
+            }
+        ];
+
+        // RENDER DOM DYNAMICALLY
+        function renderRubrik() {
+            const container = document.getElementById('rubrik-container');
+            container.innerHTML = '';
+
+            rubrikData.forEach(aspek => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden card-box';
+                
+                let indikatorHTML = '';
+                aspek.indikator.forEach(ind => {
+                    indikatorHTML += `
+                        <div class="p-5 border-b border-slate-100 hover:bg-slate-50/50 transition" id="ind-box-${ind.kode}">
+                            <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
+                                <div class="lg:w-7/12">
+                                    <div class="flex items-start space-x-2">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800 mt-0.5">
+                                            ${ind.kode}
+                                        </span>
+                                        <p class="text-sm font-medium text-slate-800 leading-relaxed">
+                                            ${ind.deskripsi}
+                                        </p>
+                                    </div>
+                                    <div class="mt-2 text-xs text-slate-500 flex items-center space-x-3">
+                                        <span>Bobot Butir: <strong class="text-slate-700">${ind.bobot}</strong></span>
+                                        <span>•</span>
+                                        <span>Nilai Tertimbang Maks: <strong class="text-slate-700">${ind.bobot}.00</strong></span>
+                                    </div>
+                                </div>
+
+                                <!-- OPSI SKOR 1 - 4 -->
+                                <div class="lg:w-5/12 flex flex-col items-end">
+                                    <div class="grid grid-cols-4 gap-2 w-full max-w-xs">
+                                        ${[1, 2, 3, 4].map(skor => `
+                                            <label class="cursor-pointer text-center">
+                                                <input type="radio" name="skor-${ind.kode}" value="${skor}" onchange="calculateScore()" class="peer sr-only">
+                                                <div class="p-2 border border-slate-200 rounded-lg peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 hover:bg-slate-100 text-xs font-bold transition flex flex-col items-center">
+                                                    <span>${skor}</span>
+                                                    <span class="text-[9px] font-normal opacity-75">${getSkorLabel(skor)}</span>
+                                                </div>
+                                            </label>
+                                        `).join('')}
+                                    </div>
+                                    <div class="mt-2 text-xs font-semibold text-slate-600">
+                                        Perolehan: <span id="nilai-ind-${ind.kode}" class="text-blue-700 font-bold">0.00</span> / ${ind.bobot}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CATATAN KHUSUS UNTUK SKOR EKSTREM (1 ATAU 4) -->
+                            <div id="catatan-wrapper-${ind.kode}" class="mt-3 hidden">
+                                <label class="block text-xs font-medium text-amber-800 mb-1 flex items-center gap-1">
+                                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-600"></i>
+                                    Catatan Justifikasi Penilai (Wajib Diisi untuk Skor <span id="skor-label-${ind.kode}"></span>)
+                                </label>
+                                <input type="text" id="catatan-ind-${ind.kode}" placeholder="Tuliskan alasan/bukti kuat pemberian skor ini..." class="w-full px-3 py-1.5 text-xs border border-amber-300 bg-amber-50/50 rounded-lg focus:ring-1 focus:ring-amber-500 outline-none">
+                            </div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="bg-slate-100 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <div class="flex items-center space-x-3">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-sm">
+                                ${aspek.aspekKode}
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">${aspek.aspekNama}</h3>
+                                <p class="text-xs text-slate-500">Bobot Aspek: <strong>${aspek.aspekBobot}%</strong></p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-slate-500">Subtotal Aspek</span>
+                            <div class="text-lg font-bold text-blue-700" id="subtotal-aspek-${aspek.aspekKode}">0.00 / ${aspek.aspekBobot}</div>
+                        </div>
+                    </div>
+                    <div>
+                        ${indikatorHTML}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        function getSkorLabel(skor) {
+            switch(skor) {
+                case 1: return "Lemah";
+                case 2: return "Cukup";
+                case 3: return "Kuat";
+                case 4: return "S.Kuat";
+                default: return "";
+            }
+        }
+
+        // PERHITUNGAN SCORE AUTOMATIS
+        function calculateScore() {
+            let totalNilaiAkhir = 0;
+            let totalEvaluated = 0;
+
+            rubrikData.forEach(aspek => {
+                let subtotalAspek = 0;
+
+                aspek.indikator.forEach(ind => {
+                    const radios = document.getElementsByName(`skor-${ind.kode}`);
+                    let selectedSkor = 0;
+
+                    for (const radio of radios) {
+                        if (radio.checked) {
+                            selectedSkor = parseInt(radio.value);
+                            break;
+                        }
+                    }
+
+                    const catatanWrapper = document.getElementById(`catatan-wrapper-${ind.kode}`);
+                    const skorLabel = document.getElementById(`skor-label-${ind.kode}`);
+
+                    if (selectedSkor > 0) {
+                        totalEvaluated++;
+                        // Rumus: (Skor / 4) * Bobot Butir
+                        const nilaiIndikator = (selectedSkor / 4) * ind.bobot;
+                        subtotalAspek += nilaiIndikator;
+
+                        document.getElementById(`nilai-ind-${ind.kode}`).innerText = nilaiIndikator.toFixed(2);
+
+                        // Tampilkan form catatan jika skor 1 atau 4
+                        if (selectedSkor === 1 || selectedSkor === 4) {
+                            catatanWrapper.classList.remove('hidden');
+                            skorLabel.innerText = selectedSkor === 1 ? "1 (Lemah)" : "4 (Sangat Kuat)";
+                        } else {
+                            catatanWrapper.classList.add('hidden');
+                        }
+                    } else {
+                        document.getElementById(`nilai-ind-${ind.kode}`).innerText = "0.00";
+                        catatanWrapper.classList.add('hidden');
+                    }
+                });
+
+                document.getElementById(`subtotal-aspek-${aspek.aspekKode}`).innerText = `${subtotalAspek.toFixed(2)} / ${aspek.aspekBobot}`;
+                totalNilaiAkhir += subtotalAspek;
+            });
+
+            // Update Top Card
+            document.getElementById('evaluated-count').innerText = totalEvaluated;
+            document.getElementById('total-score').innerText = totalNilaiAkhir.toFixed(2);
+
+            // Update Status Badges
+            const statusBadge = document.getElementById('status-badge');
+            if (totalEvaluated === 15) {
+                statusBadge.className = "inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800";
+                statusBadge.innerText = "Selesai Lengkap";
+            } else {
+                statusBadge.className = "inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800";
+                statusBadge.innerText = `Belum Lengkap (${15 - totalEvaluated} lagi)`;
+            }
+
+            // Update Predikat Badge
+            const predikatBadge = document.getElementById('predikat-badge');
+            if (totalEvaluated < 15) {
+                predikatBadge.innerText = "Belum Selesai";
+                predikatBadge.className = "text-sm font-semibold text-slate-400 mt-1";
+            } else if (totalNilaiAkhir >= 86) {
+                predikatBadge.innerText = "Sangat Baik (Sangat Direkomendasikan)";
+                predikatBadge.className = "text-sm font-bold text-emerald-600 mt-1";
+            } else if (totalNilaiAkhir >= 71) {
+                predikatBadge.innerText = "Baik (Direkomendasikan)";
+                predikatBadge.className = "text-sm font-bold text-blue-600 mt-1";
+            } else if (totalNilaiAkhir >= 56) {
+                predikatBadge.innerText = "Cukup (Perlu Pertimbangan)";
+                predikatBadge.className = "text-sm font-bold text-amber-600 mt-1";
+            } else {
+                predikatBadge.innerText = "Kurang (Tidak Direkomendasikan)";
+                predikatBadge.className = "text-sm font-bold text-rose-600 mt-1";
+            }
+        }
+
+        // RESET FORM
+        function resetForm() {
+            if (confirm("Apakah Anda yakin ingin mengosongkan seluruh isian penilaian?")) {
+                document.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
+                document.querySelectorAll('textarea').forEach(t => t.value = '');
+                document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+                document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+                calculateScore();
+            }
+        }
+
+        // EKSPOR FILE JSON DATA
+        function exportJSON() {
+            const namaPeserta = document.getElementById('nama-peserta').value || 'TanpaNama';
+            const data = {
+                juri: document.getElementById('nama-juri').value,
+                peserta: namaPeserta,
+                noPeserta: document.getElementById('no-peserta').value,
+                kategori: document.getElementById('kategori-gtk').value,
+                totalSkor: document.getElementById('total-score').innerText,
+                catatanUmum: document.getElementById('catatan-umum').value,
+                waktuPenilaian: new Date().toLocaleString('id-ID')
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Penilaian_GTK_${namaPeserta.replace(/\s+/g, '_')}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // INITIALIZE ON LOAD
+        window.onload = function() {
+            renderRubrik();
+        };
+    </script>
+</body>
+</html>
